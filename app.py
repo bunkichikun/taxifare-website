@@ -1,18 +1,18 @@
 import datetime
 import requests
-import time
 
 import pandas as pd
 import streamlit as st
 
 
+
 '''
 # Benoît's Incredible TaxiFareModel Frontend
 '''
-
 st.markdown("## 🕛 When do you want a ride?")
 
-p_dt = st.datetime_input("Choose a time:", datetime.datetime.now())
+columns0 = st.columns(2)
+p_dt = columns0[0].datetime_input("Choose a time:", datetime.datetime.now())
 
 st.markdown("## :color[🚀 Pickup Location]{background='#00ff0d'}")
 
@@ -55,23 +55,12 @@ params = {
     "passenger_count" :   nb_passengers
 }
 
-def fake_progress_bar():
-    latest_iteration = st.empty()
-    bar = st.progress(0)
-
-    for i in range(11):
-        # Update the progress bar with each iteration.
-        latest_iteration.text(f'Loading')
-        bar.progress(10 * i )
-        time.sleep(0.05)
-
-
 
 if st.button('GO!'):
     try:
-        result = requests.get(url=url, params=params)
-        pred = result.json()
-        fake_progress_bar()
+        with st.spinner("🚕 loading...", show_time=True):
+            result = requests.get(url=url, params=params)
+            pred = result.json()
         st.success(f"Your ride estimated cost is: 💲{round(pred["fare"],2)}")
     except:
         st.error("Hu uh... something went wrong...")
